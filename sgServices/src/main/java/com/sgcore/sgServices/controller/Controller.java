@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -86,7 +86,7 @@ public class Controller {
     // methods for subservices_________________________________________________
     @PostMapping("/uploadsubservice")
     public ResponseEntity<String> uploadSubService(
-    	    @RequestParam(required = false, name = "subserviceId") Integer subserviceId,
+    		 @RequestParam("subserviceId") Integer subserviceId,
     	    @RequestParam("subserviceName") String serviceName,
     	    @RequestParam("subserviceDescription") String serviceDescription,
     	    @RequestParam("subserviceCost") Double subserviceCost,
@@ -94,7 +94,7 @@ public class Controller {
     	    @RequestParam("subserviceImage") MultipartFile serviceImage) throws IOException {
 
     	    System.out.println("Received request to add service");
-    	    return addService.uploadSubService(subserviceId,serviceName,serviceDescription,subserviceCost,serviceImage,serviceId);
+    	    return addService.uploadSubService(subserviceId, serviceName,serviceDescription,subserviceCost,serviceImage,serviceId);
     	    
 //            return ResponseEntity.status(HttpStatus.OK).body(serviceName+serviceDescription+subserviceCost+serviceId);
 
@@ -116,10 +116,7 @@ public class Controller {
     	System.out.println("getting image");
         return addService.findBySubId(id);
     }
-    @DeleteMapping("/delete/{selectedRows}")
-    public ResponseEntity<String> deleteSubservices(@PathVariable("selectedRows") List<Integer> ids) {
-    	addService.deleteSubservicesByIds(ids);
-        return ResponseEntity.ok("Selected subservices deleted successfully!");
-    }
     
 }
+
+
