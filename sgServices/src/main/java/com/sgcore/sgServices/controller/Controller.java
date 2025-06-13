@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.sgcore.sgServices.Dto.ServiceDto;
 import com.sgcore.sgServices.Dto.SubserviceDto;
 import com.sgcore.sgServices.service.AddService;
+
+import jakarta.ws.rs.PathParam;
 
 
 @RestController
@@ -83,6 +85,12 @@ public class Controller {
 		return addService.getServiceNames();
     }
     
+    @DeleteMapping("/deleteSerices/{serviceIds}")
+    public ResponseEntity<String> deleteService(@PathVariable List<Integer>serviceIds)
+    {
+    	return addService.deleteServices(serviceIds);
+    }
+    
     // methods for subservices_________________________________________________
     @PostMapping("/uploadsubservice")
     public ResponseEntity<String> uploadSubService(
@@ -116,7 +124,35 @@ public class Controller {
     	System.out.println("getting image");
         return addService.findBySubId(id);
     }
+    @DeleteMapping("/deleteSubService/{subserviceIds}")
+    public ResponseEntity<String> deleteSubService(@PathVariable List<Integer> subserviceIds )
+    {
+		return addService.deleteSubservicesByIds(subserviceIds);
+    	
+    }
     
+    // methods to upload and delete and get sectors_________________________
+    
+    @PostMapping("/uploadSector")
+    public ResponseEntity<String> uploadServiceSector(@RequestParam String sectorName, @RequestParam MultipartFile sectorImage) throws IOException
+    {
+		return addService.uploadServiceSector(sectorName,sectorImage);
+    	
+    }
+    
+    @GetMapping("/getSectorNames")
+    public ResponseEntity<List<String>> getSectorNames()
+    {
+    	return addService.getSectorNames();
+    }
+    
+    @DeleteMapping("deleteSector/{sectorname}")
+    public ResponseEntity<String> deleteSectorName(@PathVariable String sectorname)
+    {
+		return addService.deleteSector(sectorname);
+    	
+    }
+ 
 }
 
 

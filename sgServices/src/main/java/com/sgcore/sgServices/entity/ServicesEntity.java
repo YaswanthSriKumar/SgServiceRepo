@@ -1,13 +1,16 @@
 package com.sgcore.sgServices.entity;
 
 import java.util.Arrays;
+import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -22,6 +25,9 @@ public class ServicesEntity {
 	private byte[] serviceImage;
 	@Column(name="service_discription")
 	private String serviceDescription;
+	
+	@OneToMany(mappedBy = "service",cascade = CascadeType.ALL)
+	private List<SubservicesEntity> subserviceEntity;
 	
 	private String serviceType;
 	

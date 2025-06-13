@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.hibernate.internal.build.AllowSysOut;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -14,9 +15,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.sgcore.sgServices.Dto.ServiceDto;
 import com.sgcore.sgServices.Dto.SubserviceDto;
+import com.sgcore.sgServices.entity.ServiceSectorEntity;
 import com.sgcore.sgServices.entity.ServicesEntity;
 import com.sgcore.sgServices.entity.SubservicesEntity;
 import com.sgcore.sgServices.repository.ServiceRepo;
+import com.sgcore.sgServices.repository.ServiceSectorRepo;
 import com.sgcore.sgServices.repository.SubserviceRepo;
 
 @Service
@@ -27,7 +30,9 @@ public class AddService {
 	
 	@Autowired
 	SubserviceRepo subserviceRepo;
-
+	
+	@Autowired
+	ServiceSectorRepo serviceSectorRepo;
 	
 	public ResponseEntity<String> addService(String name,String description,boolean show,MultipartFile image, String serviceType ) throws IOException
 	{	
@@ -177,6 +182,10 @@ public class AddService {
 		}
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(listOfServiceNames.get());
 	}
+	public ResponseEntity<String> deleteServices(List<Integer>serviceIds) {
+		serviceRepo.deleteAllById(serviceIds);
+        return ResponseEntity.status(HttpStatus.OK).body("succesfully deleted");
+	}
 
 	// sub service methods from here ______________________________________________
 	public ResponseEntity<String> uploadSubService(Integer subserviceId,String serviceName, String serviceDescription, Double subserviceCost,
@@ -281,9 +290,46 @@ public class AddService {
 		
 	}
 
-	public void deleteSubservicesByIds(List<Integer> ids) {
+	public ResponseEntity<String> deleteSubservicesByIds(List<Integer> ids) {
 		subserviceRepo.deleteAllById(ids);	
 		System.out.println("deleted ids");
+		return ResponseEntity.status(HttpStatus.OK).body("deleted succesfully");
 	}
+
+	// methods to upload get and update service sectors
+	public ResponseEntity<String> uploadServiceSector(String sectorName, MultipartFile sectorImage) throws IOException {
+		ServiceSectorEntity sectorEntity= new ServiceSectorEntity();
+		sectorEntity.setSectorName(sectorName);
+		sectorEntity.setSectorImage(sectorImage.getBytes());
+		
+		Optional<ServiceSectorEntity> result =Optional.of(serviceSectorRepo.save(sectorEntity)) ;
+		if(result.isPresent())
+		{
+			return ResponseEntity.status(HttpStatus.CREATED).body("uploaded successfully");
+		}
+		else
+		return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("uploading failed");
+	}
+
+	public ResponseEntity<List<String>> getSectorNames() {
+
+		Optional<List<String>> result= Optional.ofNullable(serviceSectorRepo.findAllSectorNames());
+		
+		if(result.isPresent())
+		{
+			return ResponseEntity.status(HttpStatus.CREATED).body(result.get());
+		}
+		else
+		return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result.get());
+	}
+
+	public ResponseEntity<String> deleteSector(String sectorname) {
+		serviceSectorRepo.deleteById(sectorname);
+		return ResponseEntity.status(HttpStatus.OK).body("deleted succesfully");
+	}
+
+	
+
+	
 	
 }
