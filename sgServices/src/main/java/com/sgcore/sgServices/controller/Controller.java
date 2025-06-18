@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.sgcore.sgServices.Dto.SectorDto;
 import com.sgcore.sgServices.Dto.ServiceDto;
 import com.sgcore.sgServices.Dto.SubserviceDto;
 import com.sgcore.sgServices.service.AddService;
@@ -152,7 +153,18 @@ public class Controller {
 		return addService.deleteSector(sectorname);
     	
     }
- 
+    
+    @GetMapping("/getSectors")
+    public ResponseEntity<List<SectorDto>> getSectors()
+    {
+		return addService.getSectors();
+    	
+    }
+    @GetMapping("/sectorimg/{sectorName}")
+    public ResponseEntity<byte[]> getSectorImage(@PathVariable String sectorName) {
+    	System.out.println("getting image");
+        return addService.getSectorImage(sectorName);
+    }
 }
 
 

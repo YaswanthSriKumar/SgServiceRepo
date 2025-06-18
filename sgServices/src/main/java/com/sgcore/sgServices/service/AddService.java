@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.sgcore.sgServices.Dto.SectorDto;
 import com.sgcore.sgServices.Dto.ServiceDto;
 import com.sgcore.sgServices.Dto.SubserviceDto;
 import com.sgcore.sgServices.entity.ServiceSectorEntity;
@@ -326,6 +327,27 @@ public class AddService {
 	public ResponseEntity<String> deleteSector(String sectorname) {
 		serviceSectorRepo.deleteById(sectorname);
 		return ResponseEntity.status(HttpStatus.OK).body("deleted succesfully");
+	}
+
+	public ResponseEntity<List<SectorDto>> getSectors() {
+		// TODO Auto-generated method stub
+		List<ServiceSectorEntity> sectorEntity=  serviceSectorRepo.findAll();
+		List<SectorDto> sectorDto= sectorEntity.stream().map(sector->{
+			SectorDto sdto= new SectorDto();
+			sdto.setSector_name(sector.getSectorName());
+			sdto.setSector_image("http://localhost:8088/SGSERVICES/sectorimg/"+sector.getSectorName());
+			return sdto;
+		}).toList();
+		return ResponseEntity.status(HttpStatus.OK).body(sectorDto);
+	}
+
+	public ResponseEntity<byte[]> getSectorImage(String sectorName) {
+		Optional<ServiceSectorEntity> sectorEntity = serviceSectorRepo.findById(sectorName);
+		if(sectorEntity.isPresent())
+		{
+			return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_JPEG).body(sectorEntity.get().getSectorImage());
+		}
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 	}
 
 	
